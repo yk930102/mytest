@@ -37,12 +37,12 @@ export class EquipmentPage {
   // @ViewChild('segment') segment: any;
   userName:string = '';
   tabIndex: number = 0;
-  equipmentType: string = '0';//Éè±¸ÀàĞÍ 0Ëşµõ 1Ê©¹¤µçÌİ
+  equipmentType: string = '0';//è®¾å¤‡ç±»å‹ 0å¡”åŠ 1æ–½å·¥ç”µæ¢¯
 
   currentModal: any;
   elevatorModals: Array<any> = new Array<any>(4);
 
-  //×âÁŞµ¥Î»ĞÅÏ¢
+  //ç§Ÿèµå•ä½ä¿¡æ¯
   rentalUnits:any = [];
   installUnits:any = [];
 
@@ -65,7 +65,7 @@ export class EquipmentPage {
 
   state:boolean = false;
   canOp:boolean = false;
-  canDelImg:boolean = false;//ÄÜ·ñÉ¾³ıÕÕÆ¬
+  canDelImg:boolean = false;//èƒ½å¦åˆ é™¤ç…§ç‰‡
   canAdd:boolean = false;
   canPoint:boolean = false;
   canUpdate:boolean = false;
@@ -75,40 +75,40 @@ export class EquipmentPage {
     this.userName = this.appGlobal.get('userName');
     // let postName:string = this.appGlobal.get('selectedPostId');
     // if(postName){
-    //   if(postName.indexOf('executive_manager') != -1){//Ö´ĞĞ¾­Àí
+    //   if(postName.indexOf('executive_manager') != -1){//æ‰§è¡Œç»ç†
     //     this.canOp = true;
     //     this.canDelImg = true;
     //     this.canAdd = true;
     //     this.canPoint = true;
     //     this.canUpdate = true;
     //   }
-    //   if(postName.indexOf('safety_responsible') != -1){//°²È«¸ºÔğ
+    //   if(postName.indexOf('safety_responsible') != -1){//å®‰å…¨è´Ÿè´£
     //     this.canDelImg = true;
     //     this.canAdd = true;
     //     this.canPoint = true;
     //     this.canUpdate = true;
     //   }
-    //   if(postName.indexOf('machine_controllers') != -1){//»ú¹ÜÔ±
+    //   if(postName.indexOf('machine_controllers') != -1){//æœºç®¡å‘˜
     //     this.canDelImg = true;
     //     this.canAdd = true;
     //   }
     // }
     let equipmentNormal = this.appGlobal.checkPermission('EquipmentNormal');
-    if(equipmentNormal){//Ò»°ã²Ù×÷ÈË
+    if(equipmentNormal){//ä¸€èˆ¬æ“ä½œäºº
           this.canDelImg = true;
           this.canAdd = true;
           this.canPoint = true;
           this.canUpdate = true;
     }
     let equipmentManager = this.appGlobal.checkPermission('EquipmentManager');
-    if(equipmentManager){//¹ÜÀíÔ±
+    if(equipmentManager){//ç®¡ç†å‘˜
       this.canOp = true;
       this.canDelImg = true;
       this.canAdd = true;
       this.canPoint = true;
       this.canUpdate = true;
     }
-    //³õÊ¼»¯µ¥Î»ĞÅÏ¢ ³ö×âµ¥Î» °´²ğµ¥Î»
+    //åˆå§‹åŒ–å•ä½ä¿¡æ¯ å‡ºç§Ÿå•ä½ æŒ‰æ‹†å•ä½
     this.projectId = this.appGlobal.get('selectedOrgId');
     this.initUnitsInfo();
   }
@@ -122,13 +122,13 @@ export class EquipmentPage {
       this.currentModal.dismiss();
     }
     // this.segment.nativeElement.hidden = true;
-    // //Ó¦¸ÃÔÚ±£´æÖ®ºóÖ´ĞĞ
+    // //åº”è¯¥åœ¨ä¿å­˜ä¹‹åæ‰§è¡Œ
     // this.event.publish('reload','equipmentWarning');
   }
   ionViewDidLoad() {
     // this.initUnitsInfo();
     // const me = this;
-    // // ·µ»Ø¼üÌí¼Ó¼àÌı
+    // // è¿”å›é”®æ·»åŠ ç›‘å¬
     // document.getElementsByClassName('back-button')[0].addEventListener('click', event => {
     //   if (me.currentModal) {
     //     me.currentModal.dismiss();
@@ -140,9 +140,9 @@ export class EquipmentPage {
       .set('projectId',this.projectId)
       .set('loginFrom', 'app');
 
-    // ÏÂÀ­Ë¢ĞÂ
+    // ä¸‹æ‹‰åˆ·æ–°
     let loader = this.loadingCtrl.create({
-      content: "ÕıÔÚ¼ÓÔØ¡­¡­"
+      content: "æ­£åœ¨åŠ è½½â€¦â€¦"
     });
     loader.present();
 
@@ -160,7 +160,7 @@ export class EquipmentPage {
       }
     });
   }
-  // Í¼Æ¬´¦Àí,½«Í¼Æ¬¼ÓÉÏÇ°×º
+  // å›¾ç‰‡å¤„ç†,å°†å›¾ç‰‡åŠ ä¸Šå‰ç¼€
   handlePics(itemList: Array<any>) {
     itemList = itemList || [];
     itemList.forEach(item => {
@@ -182,9 +182,9 @@ export class EquipmentPage {
       .set('projectId',this.projectId)
       .set('loginFrom', 'app');
 
-    // ÏÂÀ­Ë¢ĞÂ
+    // ä¸‹æ‹‰åˆ·æ–°
     let loader = this.loadingCtrl.create({
-      content: "ÕıÔÚ¼ÓÔØ¡­¡­"
+      content: "æ­£åœ¨åŠ è½½â€¦â€¦"
     });
     loader.present();
 
@@ -213,7 +213,7 @@ export class EquipmentPage {
     }
     this.initUnitsInfo();
   }
-  //ÇĞ»»Ò³Ç©
+  //åˆ‡æ¢é¡µç­¾
   onChangeTab(index) {
     if(this.tabIndex == index){
       return;
@@ -229,34 +229,34 @@ export class EquipmentPage {
 
     this.tabIndex = index;
     if(this.equipmentType == '1'){
-        if(index == 0){//µ¥Î»ĞÅÏ¢
+        if(index == 0){//å•ä½ä¿¡æ¯
           this.initUnitsInfo();
           this.state = false;
         }
-        if(index == 1){//µçÌİÉè±¸ĞÅÏ¢
+        if(index == 1){//ç”µæ¢¯è®¾å¤‡ä¿¡æ¯
           this.openModalPage(index,ElevatorInfoPage);
         }
-        if (index == 2){//µçÌİ¹ÜÀí
+        if (index == 2){//ç”µæ¢¯ç®¡ç†
           this.openModalPage(index,ElevatorManagePage);
         }
-        if (index == 3){//µçÌİÎ¬ĞŞ±£Ñø
+        if (index == 3){//ç”µæ¢¯ç»´ä¿®ä¿å…»
           this.openModalPage(index,ElevatorMaintenancePage);
         }
         return;
     }
-    if(index == 0){//µ¥Î»ĞÅÏ¢
+    if(index == 0){//å•ä½ä¿¡æ¯
       this.initUnitsInfo();
       this.state = false;
-    }else if(index == 1){//Éè±¸ĞÅÏ¢
+    }else if(index == 1){//è®¾å¤‡ä¿¡æ¯
       this.openModalPage(index,EquipmentInfoPage);
-    }else if (index == 2){//Ëşµõ¹ÜÀí
+    }else if (index == 2){//å¡”åŠç®¡ç†
       this.openModalPage(index,TowerCraneManagePage);
-    }else if (index == 3){//Î¬ĞŞ±£Ñø
+    }else if (index == 3){//ç»´ä¿®ä¿å…»
       this.openModalPage(index,TowerCraneMaintenancePage);
     }
 
   }
-  //Ìø×ª¾ßÌåÒ³Ãæ
+  //è·³è½¬å…·ä½“é¡µé¢
   openModalPage(index,page){
     let modal = this.modalCtrl.create(page, {}, {
       enterAnimation: 'modal-fast-enter',
@@ -282,7 +282,7 @@ export class EquipmentPage {
   onClickToShowOrAddImg(event,item,key) {
     if(!item[key]){
       if(!this.canAdd){
-        this.appService.alert('ÄúÃ»ÓĞÌí¼ÓÈ¨ÏŞ!');
+        this.appService.alert('æ‚¨æ²¡æœ‰æ·»åŠ æƒé™!');
         return;
       }
       this.currentItem = item;
@@ -296,27 +296,27 @@ export class EquipmentPage {
       viewer.present();
     }
   }
-  // ÅÄÕÕ»Øµ÷
+  // æ‹ç…§å›è°ƒ
   onTakePhotoCallBack(params){
-    // params ÊÇÒ»¸öÍ¼Æ¬Â·¾¶ temp/PhotoWatermark/xxx.jpg
+    // params æ˜¯ä¸€ä¸ªå›¾ç‰‡è·¯å¾„ temp/PhotoWatermark/xxx.jpg
     // this.appService.alert(params)
     const path = GlobalVariable.BASE_URL + params;
     let key = this.currentKey;
     let item = this.currentItem;
     item[key] = path;
     item['hadFinishItems'] += 1;
-    // /* ½â¾öÕÕÆ¬»ØÏÔÎÊÌâ */
+    // /* è§£å†³ç…§ç‰‡å›æ˜¾é—®é¢˜ */
     this.changeDetectorRef.markForCheck();
     this.changeDetectorRef.detectChanges();
   }
 
   removePic(item,key,index) {
-    if(!item[key]){//Ã»ÓĞÍ¼Æ¬Ö±½Ó·µ»Ø
+    if(!item[key]){//æ²¡æœ‰å›¾ç‰‡ç›´æ¥è¿”å›
       return;
     }
-    this.appService.confirm('È·ÈÏÉ¾³ı¸ÃÕÕÆ¬Âğ?',()=>{
+    this.appService.confirm('ç¡®è®¤åˆ é™¤è¯¥ç…§ç‰‡å—?',()=>{
       if(!this.canDelImg){
-        this.appService.alert("ÄúÃ»ÓĞÉ¾³ıÈ¨ÏŞ");
+        this.appService.alert("æ‚¨æ²¡æœ‰åˆ é™¤æƒé™");
         return;
       }
       if(!item.id){
@@ -331,16 +331,16 @@ export class EquipmentPage {
         if (res) {
           item[key] = '';
           item['hadFinishItems'] -= 1;
-          this.appService.alert('É¾³ı³É¹¦£¡')
+          this.appService.alert('åˆ é™¤æˆåŠŸï¼')
         }
         if (err) {
-          this.appService.alert('ÍøÂç´íÎó£¬ÇëÖØÊÔ£¡')
+          this.appService.alert('ç½‘ç»œé”™è¯¯ï¼Œè¯·é‡è¯•ï¼')
           console.log(err)
         }
       });
     })
   }
-  //±£´æ³ö×âµ¥Î»ĞÅÏ¢
+  //ä¿å­˜å‡ºç§Ÿå•ä½ä¿¡æ¯
   onUpdateRentalUnit(item) {
     let params = new HttpParams({
       fromObject:  {...item, ...{
@@ -355,7 +355,7 @@ export class EquipmentPage {
     });
 
     let loader = this.loadingCtrl.create({
-      content: "ÕıÔÚ±£´æ¡­¡­"
+      content: "æ­£åœ¨ä¿å­˜â€¦â€¦"
     });
     loader.present();
 
@@ -364,17 +364,17 @@ export class EquipmentPage {
       loader.dismiss();
       if (res) {
         if(res.msg == 'Y'){
-          this.appService.alert('±£´æ³É¹¦')
+          this.appService.alert('ä¿å­˜æˆåŠŸ')
         }
       }
       if (err) {
-        this.appService.alert('ÍøÂç´íÎó£¬ÇëÖØÊÔ£¡')
+        this.appService.alert('ç½‘ç»œé”™è¯¯ï¼Œè¯·é‡è¯•ï¼')
         console.log(err)
       }
     });
 
   }
-  //±£´æ°²²ğµ¥Î»ĞÅÏ¢
+  //ä¿å­˜å®‰æ‹†å•ä½ä¿¡æ¯
   onUpdateInstallUnit(item) {
     let params = new HttpParams({
       fromObject:  {...item, ...{
@@ -391,7 +391,7 @@ export class EquipmentPage {
     });
 
     let loader = this.loadingCtrl.create({
-      content: "ÕıÔÚ±£´æ¡­¡­"
+      content: "æ­£åœ¨ä¿å­˜â€¦â€¦"
     });
     loader.present();
 
@@ -400,11 +400,11 @@ export class EquipmentPage {
       loader.dismiss();
       if (res) {
         if(res.msg == 'Y'){
-          this.appService.alert('±£´æ³É¹¦')
+          this.appService.alert('ä¿å­˜æˆåŠŸ')
         }
       }
       if (err) {
-        this.appService.alert('ÍøÂç´íÎó£¬ÇëÖØÊÔ£¡')
+        this.appService.alert('ç½‘ç»œé”™è¯¯ï¼Œè¯·é‡è¯•ï¼')
         console.log(err)
       }
     });
@@ -412,26 +412,26 @@ export class EquipmentPage {
   }
 
   radioChange(item,key,newValue) {
-    if(item[key] != newValue){//²»ÏàµÈ
+    if(item[key] != newValue){//ä¸ç›¸ç­‰
       if(newValue == 0){
         let alert = this.alertCtrl.create({
-          title: 'ÌáÊ¾',
-          message: 'ÊÇ·ñ¿Û·Ö£¿',
+          title: 'æç¤º',
+          message: 'æ˜¯å¦æ‰£åˆ†ï¼Ÿ',
           buttons: [
             {
-              text: '·ñ',
+              text: 'å¦',
               role: 'cancel',
               handler: () => {
               }
             },
             {
-              text: 'ÊÇ',
+              text: 'æ˜¯',
               handler: () => {
-                //´Ó1µ½0 -2.1
+                //ä»1åˆ°0 -2.1
                 if(item[key] == '1'){
                   item['creditScoreByThis'] -= 2.1;
                   item['creditScore'] -= 2.1;
-                }else{//´ÓÎŞµ½0
+                }else{//ä»æ— åˆ°0
                   item['creditScoreByThis'] -= 2;
                   item['creditScore'] -= 2;
                 }
@@ -443,12 +443,12 @@ export class EquipmentPage {
           ]
         });
         alert.present();
-      }else{//È·ÈÏ
-        //´Ó0µ½1
+      }else{//ç¡®è®¤
+        //ä»0åˆ°1
         if(item[key] == '0'){
           item['creditScoreByThis'] +=  + 2.1
           item['creditScore'] += 2.1
-        }else{//´ÓÎŞµ½1
+        }else{//ä»æ— åˆ°1
           item['creditScoreByThis'] += 0.1
           item['creditScore'] += 0.1
         }
@@ -456,14 +456,14 @@ export class EquipmentPage {
         item['creditScore'] = parseFloat(item['creditScore'].toFixed(1));
         item[key] = newValue;
       }
-      item['creditStatus'] = item['creditScore'] >= 70 ? 'ºÏ¸ñ' : item['creditScore'] >= 60 ? '¾¯Ê¾': 'ºÚÃûµ¥';
+      item['creditStatus'] = item['creditScore'] >= 70 ? 'åˆæ ¼' : item['creditScore'] >= 60 ? 'è­¦ç¤º': 'é»‘åå•';
     }
   }
 
   addBaseInfo() {
     this.appService.alert(this.appGlobal.permissionMap['EquipmentNormal-name'])
     if(!this.canAdd){
-      this.appService.alert('ÄúÃ»ÓĞ¸Ã²Ù×÷È¨ÏŞ<br/>ÇëÁªÏµÖ´ĞĞ¾­Àí »ò °²È«¸ºÔğ¡¢»ú¹ÜÔ±!')
+      this.appService.alert('æ‚¨æ²¡æœ‰è¯¥æ“ä½œæƒé™<br/>è¯·è”ç³»æ‰§è¡Œç»ç† æˆ– å®‰å…¨è´Ÿè´£ã€æœºç®¡å‘˜!')
       return;
     }
     if(this.state){
@@ -481,7 +481,7 @@ export class EquipmentPage {
 
   onPoints() {
     if(!this.canPoint){
-      this.appService.alert('ÄúÃ»ÓĞ¸Ã²Ù×÷È¨ÏŞ<br/>ÇëÁªÏµÖ´ĞĞ¾­Àí »ò °²È«¸ºÔğ!')
+      this.appService.alert('æ‚¨æ²¡æœ‰è¯¥æ“ä½œæƒé™<br/>è¯·è”ç³»æ‰§è¡Œç»ç† æˆ– å®‰å…¨è´Ÿè´£!')
       return;
     }
     if(this.state){
@@ -500,15 +500,15 @@ export class EquipmentPage {
   delRecord(slidingItem: ItemSliding,arrIndex:number,formId: any,index:number) {
     slidingItem.close();
     if(!this.canAdd){
-      this.appService.alert('Ã»ÓĞÈ¨ÏŞ£¬ÇëÁªÏµÖ´ĞĞ¾­Àí¡¢°²È«¸ºÔğ»ò»ú¹ÜÔ±£¡');
+      this.appService.alert('æ²¡æœ‰æƒé™ï¼Œè¯·è”ç³»æ‰§è¡Œç»ç†ã€å®‰å…¨è´Ÿè´£æˆ–æœºç®¡å‘˜ï¼');
       return;
     }
 
-    this.appService.confirm('ÇëÈ·ÈÏÊÇ·ñÉ¾³ı¸Ãµ¥Î»ĞÅÏ¢£¬É¾³ıºó¸ÃÄ£¿é¹ØÁªµÄ·Ö°üµ¥Î»ĞÅÓÃ·Ö½«Í¬²½É¾³ı',()=>{
+    this.appService.confirm('è¯·ç¡®è®¤æ˜¯å¦åˆ é™¤è¯¥å•ä½ä¿¡æ¯ï¼Œåˆ é™¤åè¯¥æ¨¡å—å…³è”çš„åˆ†åŒ…å•ä½ä¿¡ç”¨åˆ†å°†åŒæ­¥åˆ é™¤',()=>{
       let params = new HttpParams()
         .set('formId',formId);
       let loader = this.loadingCtrl.create({
-        content: "ÕıÔÚÉ¾³ı¡­¡­"
+        content: "æ­£åœ¨åˆ é™¤â€¦â€¦"
       });
       loader.present();
 
@@ -523,25 +523,25 @@ export class EquipmentPage {
             }else{
               this.installUnits.splice(arrIndex,1);
             }
-            this.appService.alert('É¾³ı³É¹¦')
+            this.appService.alert('åˆ é™¤æˆåŠŸ')
           }
           if(res.msg == 'N'){
-            this.appService.alert('¸Ãµ¥Î»ĞÅÏ¢ÒÑ±»ÆäËûÄ£¿éÒıÓÃ£¬ÎŞ·¨É¾³ı£»ÈçĞèÉ¾³ı£¬ÇëÉ¾³ıÒıÓÃÄ£¿éºó£¬·½¿ÉÉ¾³ı¸Ãµ¥Î»ĞÅÏ¢!')
+            this.appService.alert('è¯¥å•ä½ä¿¡æ¯å·²è¢«å…¶ä»–æ¨¡å—å¼•ç”¨ï¼Œæ— æ³•åˆ é™¤ï¼›å¦‚éœ€åˆ é™¤ï¼Œè¯·åˆ é™¤å¼•ç”¨æ¨¡å—åï¼Œæ–¹å¯åˆ é™¤è¯¥å•ä½ä¿¡æ¯!')
           }
         }
         if (err) {
-          this.appService.alert('ÍøÂç´íÎó£¬ÇëÖØÊÔ£¡')
+          this.appService.alert('ç½‘ç»œé”™è¯¯ï¼Œè¯·é‡è¯•ï¼')
           console.log(err)
         }
       });
     })
   }
 
-  //ĞŞ¸Äµ¥Î»Ãû³Æ
+  //ä¿®æ”¹å•ä½åç§°
   updateUnit(slidingItem: ItemSliding, item, index: number) {
     slidingItem.close();
     if(!this.canUpdate){
-      this.appService.alert('ÄúÃ»ÓĞ¸Ã²Ù×÷È¨ÏŞ<br/>ÇëÁªÏµ¹ÜÀíÔ±£¡');
+      this.appService.alert('æ‚¨æ²¡æœ‰è¯¥æ“ä½œæƒé™<br/>è¯·è”ç³»ç®¡ç†å‘˜ï¼');
       return;
     }
     this.navCtrl.push('UnitUpdatePage',{
@@ -553,7 +553,7 @@ export class EquipmentPage {
     });
   }
 
-  //²é¿´ÏêÏ¸
+  //æŸ¥çœ‹è¯¦ç»†
   onShowDetail() {
     if(this.state){
       return;
@@ -571,7 +571,7 @@ export class EquipmentPage {
     }
   }
 
-  //Ìí¼Ó¸æÖªµ¥
+  //æ·»åŠ å‘ŠçŸ¥å•
   addInform() {
     if(this.state){
       return;
@@ -584,4 +584,4 @@ export class EquipmentPage {
     });
   }
 }
-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaabbbbbbbbbbbbbbbbbbb
