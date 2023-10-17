@@ -1,4 +1,586 @@
-为什么连就连司机
-立刻解放了看电视
-了解到森林发夹ll;fds 
-l;fdsl;
+import {ChangeDetectorRef, Component} from '@angular/core';
+import {
+  AlertController,
+  Events,
+  IonicPage,
+  ItemSliding,
+  LoadingController,
+  ModalController,
+  NavController,
+  NavParams
+} from 'ionic-angular';
+import {GlobalVariable} from "../../global";
+import {HttpParams} from "@angular/common/http";
+import {ImageViewerController} from "ionic-img-viewer";
+import {AppGlobal, AppService} from "../../app/app.service";
+import {TowerCraneManagePage} from "./tower-crane-manage/tower-crane-manage";
+import {ElevatorMaintenancePage} from "./elevator-maintenance/elevator-maintenance";
+import {ElevatorManagePage} from "./elevator-manage/elevator-manage";
+import {ElevatorInfoPage} from "./elevator-info/elevator-info";
+import {EquipmentInfoPage} from "./equipment-info/equipment-info";
+import {TowerCraneMaintenancePage} from "./tower-crane-maintenance/tower-crane-maintenance";
+
+/**
+ * Generated class for the EquipmentPage page.
+ *
+ * See https://ionicframework.com/docs/components/#navigation for more info on
+ * Ionic pages and navigation.
+ */
+
+@IonicPage()
+@Component({
+  selector: 'page-equipment',
+  templateUrl: 'equipment.html',
+})
+export class EquipmentPage {
+  manualLeave: boolean = false;
+  // @ViewChild('segment') segment: any;
+  userName:string = '';
+  tabIndex: number = 0;
+  equipmentType: string = '0';//设备类型 0塔吊 1施工电梯
+
+  currentModal: any;
+  elevatorModals: Array<any> = new Array<any>(4);
+
+  //租赁单位信息
+  rentalUnits:any = [];
+  installUnits:any = [];
+
+  equipmentList:any = [];
+  towerCraneInstallList:any = [];
+
+
+  deletePicUrls:any = [
+    'pm2020_pmrentalunit.do?method=deleteImg',
+    'pm2020_pminstallunit.do?method=deleteImg',
+    'pm2020_pmequipment.do?method=deleteImg'
+  ];
+  delRecordUrls:any = [
+    'pm2020_pmrentalunit.do?method=deleteRecord',
+    'pm2020_pminstallunit.do?method=deleteRecord'
+  ];
+  currentItem:any;
+  currentKey: any;
+  projectId: string;
+
+  state:boolean = false;
+  canOp:boolean = false;
+  canDelImg:boolean = false;//能否删除照片
+  canAdd:boolean = false;
+  canPoint:boolean = false;
+  canUpdate:boolean = false;
+  constructor(public navCtrl: NavController, public navParams: NavParams, private loadingCtrl: LoadingController,public imageViewerCtrl: ImageViewerController,
+              public appService: AppService,public appGlobal: AppGlobal,public changeDetectorRef: ChangeDetectorRef,
+              public modalCtrl: ModalController,public alertCtrl:AlertController,public event: Events ) {
+    this.userName = this.appGlobal.get('userName');
+    // let postName:string = this.appGlobal.get('selectedPostId');
+    // if(postName){
+    //   if(postName.indexOf('executive_manager') != -1){//执行经理
+    //     this.canOp = true;
+    //     this.canDelImg = true;
+    //     this.canAdd = true;
+    //     this.canPoint = true;
+    //     this.canUpdate = true;
+    //   }
+    //   if(postName.indexOf('safety_responsible') != -1){//安全负责
+    //     this.canDelImg = true;
+    //     this.canAdd = true;
+    //     this.canPoint = true;
+    //     this.canUpdate = true;
+    //   }
+    //   if(postName.indexOf('machine_controllers') != -1){//机管员
+    //     this.canDelImg = true;
+    //     this.canAdd = true;
+    //   }
+    // }
+    let equipmentNormal = this.appGlobal.checkPermission('EquipmentNormal');
+    if(equipmentNormal){//一般操作人
+          this.canDelImg = true;
+          this.canAdd = true;
+          this.canPoint = true;
+          this.canUpdate = true;
+    }
+    let equipmentManager = this.appGlobal.checkPermission('EquipmentManager');
+    if(equipmentManager){//管理员
+      this.canOp = true;
+      this.canDelImg = true;
+      this.canAdd = true;
+      this.canPoint = true;
+      this.canUpdate = true;
+    }
+    //初始化单位信息 出租单位 按拆单位
+    this.projectId = this.appGlobal.get('selectedOrgId');
+    this.initUnitsInfo();
+  }
+
+  ionViewWillEnter(){
+    // this.segment.nativeElement.hidden = false;
+  }
+  ionViewWillLeave(){
+    if (this.currentModal) {
+      this.manualLeave = true
+      this.currentModal.dismiss();
+    }
+    // this.segment.nativeElement.hidden = true;
+    // //应该在保存之后执行
+    // this.event.publish('reload','equipmentWarning');
+  }
+  ionViewDidLoad() {
+    // this.initUnitsInfo();
+    // const me = this;
+    // // 返回键添加监听
+    // document.getElementsByClassName('back-button')[0].addEventListener('click', event => {
+    //   if (me.currentModal) {
+    //     me.currentModal.dismiss();
+    //   }
+    // })
+  }
+  initUnitsInfo(){
+    let params = new HttpParams()
+      .set('projectId',this.projectId)
+      .set('loginFrom', 'app');
+
+    // 下拉刷新
+    let loader = this.loadingCtrl.create({
+      content: "正在加载……"
+    });
+    loader.present();
+
+    let url = GlobalVariable.BASE_URL + 'pm2020_pmrentalunit.do?method=getRentalAndInstallUnit';
+    this.appService.GET(url, params, (res, err) => {
+      loader.dismiss();
+      if (res) {
+        this.rentalUnits = this.handlePics(res['RentalUnit']);
+        this.installUnits = this.handlePics(res['InstallUnit']);
+        // this.rentalUnits = res['RentalUnit'];
+        // this.installUnits = res['InstallUnit'];
+      }
+      if (err) {
+        console.log(err)
+      }
+    });
+  }
+  // 图片处理,将图片加上前缀
+  handlePics(itemList: Array<any>) {
+    itemList = itemList || [];
+    itemList.forEach(item => {
+      item['hadFinishItems'] = 0;
+      Object.keys(item).forEach(key=>{
+        if(key.endsWith('Img')){
+          if(item[key]){
+            item['hadFinishItems'] ++;
+            item[key]  = GlobalVariable.BASE_URL + item[key];
+          }
+        }
+      })
+    })
+    return itemList;
+  }
+
+  initEquipmentInfo(){
+    let params = new HttpParams()
+      .set('projectId',this.projectId)
+      .set('loginFrom', 'app');
+
+    // 下拉刷新
+    let loader = this.loadingCtrl.create({
+      content: "正在加载……"
+    });
+    loader.present();
+
+    let url = GlobalVariable.BASE_URL + 'pm2020_pmequipment.do?method=getEquipmentList';
+    this.appService.GET(url, params, (res, err) => {
+      loader.dismiss();
+      if (res) {
+        this.equipmentList = res;
+      }
+      if (err) {
+        console.log(err)
+      }
+    });
+  }
+
+  segmentChanged(type:string){
+    if(this.equipmentType === type){
+      return;
+    }
+    this.equipmentType = type;
+    if (this.currentModal) {
+      this.currentModal.dismiss();
+    }
+    if(this.tabIndex != 0){
+      this.tabIndex = 0;
+    }
+    this.initUnitsInfo();
+  }
+  //切换页签
+  onChangeTab(index) {
+    if(this.tabIndex == index){
+      return;
+    }
+    if(this.state){
+      return;
+    }
+    this.state = true;
+
+    if (this.currentModal) {
+      this.currentModal.dismiss();
+    }
+
+    this.tabIndex = index;
+    if(this.equipmentType == '1'){
+        if(index == 0){//单位信息
+          this.initUnitsInfo();
+          this.state = false;
+        }
+        if(index == 1){//电梯设备信息
+          this.openModalPage(index,ElevatorInfoPage);
+        }
+        if (index == 2){//电梯管理
+          this.openModalPage(index,ElevatorManagePage);
+        }
+        if (index == 3){//电梯维修保养
+          this.openModalPage(index,ElevatorMaintenancePage);
+        }
+        return;
+    }
+    if(index == 0){//单位信息
+      this.initUnitsInfo();
+      this.state = false;
+    }else if(index == 1){//设备信息
+      this.openModalPage(index,EquipmentInfoPage);
+    }else if (index == 2){//塔吊管理
+      this.openModalPage(index,TowerCraneManagePage);
+    }else if (index == 3){//维修保养
+      this.openModalPage(index,TowerCraneMaintenancePage);
+    }
+
+  }
+  //跳转具体页面
+  openModalPage(index,page){
+    let modal = this.modalCtrl.create(page, {}, {
+      enterAnimation: 'modal-fast-enter',
+      leaveAnimation: 'modal-fast-leave',
+      showBackdrop: false,
+      enableBackdropDismiss: true,
+      cssClass: 'equipment-modal-details'
+    });
+    this.currentModal = modal;
+    this.currentModal.onWillDismiss(() => {
+      try {
+        if (this.tabIndex == index && !this.manualLeave) {
+          this.navCtrl.pop()
+        }
+      } catch (e) {
+      }
+    })
+    this.currentModal.present().then(()=>{
+      this.state = false;
+    });
+  }
+
+  onClickToShowOrAddImg(event,item,key) {
+    if(!item[key]){
+      if(!this.canAdd){
+        this.appService.alert('您没有添加权限!');
+        return;
+      }
+      this.currentItem = item;
+      this.currentKey = key;
+      window['takePhotoWatermarkTS'] = this;
+      this.appService.callCamera('takePhoto');
+      // item[key] = 'assets/imgs/pm2.jpg';
+      // item['hadFinishItems'] += 1;
+    }else{
+      const viewer = this.imageViewerCtrl.create(event.target);
+      viewer.present();
+    }
+  }
+  // 拍照回调
+  onTakePhotoCallBack(params){
+    // params 是一个图片路径 temp/PhotoWatermark/xxx.jpg
+    // this.appService.alert(params)
+    const path = GlobalVariable.BASE_URL + params;
+    let key = this.currentKey;
+    let item = this.currentItem;
+    item[key] = path;
+    item['hadFinishItems'] += 1;
+    // /* 解决照片回显问题 */
+    this.changeDetectorRef.markForCheck();
+    this.changeDetectorRef.detectChanges();
+  }
+
+  removePic(item,key,index) {
+    if(!item[key]){//没有图片直接返回
+      return;
+    }
+    this.appService.confirm('确认删除该照片吗?',()=>{
+      if(!this.canDelImg){
+        this.appService.alert("您没有删除权限");
+        return;
+      }
+      if(!item.id){
+        return;
+      }
+      let params = new HttpParams()
+        .set('id',item.id)
+        .set('fieldName',key);
+
+      let url = GlobalVariable.BASE_URL + this.deletePicUrls[index];
+      this.appService.GET(url, params, (res, err) => {
+        if (res) {
+          item[key] = '';
+          item['hadFinishItems'] -= 1;
+          this.appService.alert('删除成功！')
+        }
+        if (err) {
+          this.appService.alert('网络错误，请重试！')
+          console.log(err)
+        }
+      });
+    })
+  }
+  //保存出租单位信息
+  onUpdateRentalUnit(item) {
+    let params = new HttpParams({
+      fromObject:  {...item, ...{
+          powerOfAttorneyImg: item.powerOfAttorneyImg ? item.powerOfAttorneyImg.replace(GlobalVariable.BASE_URL,'') : '',
+          businessLicenseImg: item.businessLicenseImg ? item.businessLicenseImg.replace(GlobalVariable.BASE_URL,'') : '',
+          firstLeaseContractImg: item.firstLeaseContractImg ? item.firstLeaseContractImg.replace(GlobalVariable.BASE_URL,'') : '',
+          tailLeaseContractImg: item.tailLeaseContractImg ? item.tailLeaseContractImg.replace(GlobalVariable.BASE_URL,'') : '',
+          firstSecurityProtocolImg: item.firstSecurityProtocolImg ? item.firstSecurityProtocolImg.replace(GlobalVariable.BASE_URL,'') : '',
+          tailSecurityProtocolImg: item.tailSecurityProtocolImg ? item.tailSecurityProtocolImg.replace(GlobalVariable.BASE_URL,'') : '',
+          contractSupplementImg: item.contractSupplementImg ? item.contractSupplementImg.replace(GlobalVariable.BASE_URL,'') : '',
+        }},
+    });
+
+    let loader = this.loadingCtrl.create({
+      content: "正在保存……"
+    });
+    loader.present();
+
+    let url = GlobalVariable.BASE_URL + 'pm2020_pmrentalunit.do?method=setRentalUnit';
+    this.appService.POST(url, params, (res, err) => {
+      loader.dismiss();
+      if (res) {
+        if(res.msg == 'Y'){
+          this.appService.alert('保存成功')
+        }
+      }
+      if (err) {
+        this.appService.alert('网络错误，请重试！')
+        console.log(err)
+      }
+    });
+
+  }
+  //保存安拆单位信息
+  onUpdateInstallUnit(item) {
+    let params = new HttpParams({
+      fromObject:  {...item, ...{
+          powerOfAttorneyImg: item.powerOfAttorneyImg ? item.powerOfAttorneyImg.replace(GlobalVariable.BASE_URL,'') : '',
+          businessLicenseImg: item.businessLicenseImg ? item.businessLicenseImg.replace(GlobalVariable.BASE_URL,'') : '',
+          securityClearanceImg: item.securityClearanceImg ? item.securityClearanceImg.replace(GlobalVariable.BASE_URL,'') : '',
+          qualificationCertificateImg: item.qualificationCertificateImg ? item.qualificationCertificateImg.replace(GlobalVariable.BASE_URL,'') : '',
+          firstInstallContractImg: item.firstInstallContractImg ? item.firstInstallContractImg.replace(GlobalVariable.BASE_URL,'') : '',
+          tailInstallContractImg: item.tailInstallContractImg ? item.tailInstallContractImg.replace(GlobalVariable.BASE_URL,'') : '',
+          firstSecurityProtocolImg: item.firstSecurityProtocolImg ? item.firstSecurityProtocolImg.replace(GlobalVariable.BASE_URL,'') : '',
+          tailSecurityProtocolImg: item.tailSecurityProtocolImg ? item.tailSecurityProtocolImg.replace(GlobalVariable.BASE_URL,'') : '',
+          contractSupplementImg: item.contractSupplementImg ? item.contractSupplementImg.replace(GlobalVariable.BASE_URL,'') : '',
+        }},
+    });
+
+    let loader = this.loadingCtrl.create({
+      content: "正在保存……"
+    });
+    loader.present();
+
+    let url = GlobalVariable.BASE_URL + 'pm2020_pminstallunit.do?method=setInstallUnit';
+    this.appService.POST(url, params, (res, err) => {
+      loader.dismiss();
+      if (res) {
+        if(res.msg == 'Y'){
+          this.appService.alert('保存成功')
+        }
+      }
+      if (err) {
+        this.appService.alert('网络错误，请重试！')
+        console.log(err)
+      }
+    });
+
+  }
+
+  radioChange(item,key,newValue) {
+    if(item[key] != newValue){//不相等
+      if(newValue == 0){
+        let alert = this.alertCtrl.create({
+          title: '提示',
+          message: '是否扣分？',
+          buttons: [
+            {
+              text: '否',
+              role: 'cancel',
+              handler: () => {
+              }
+            },
+            {
+              text: '是',
+              handler: () => {
+                //从1到0 -2.1
+                if(item[key] == '1'){
+                  item['creditScoreByThis'] -= 2.1;
+                  item['creditScore'] -= 2.1;
+                }else{//从无到0
+                  item['creditScoreByThis'] -= 2;
+                  item['creditScore'] -= 2;
+                }
+                item['creditScoreByThis'] = parseFloat(item['creditScoreByThis'].toFixed(1));
+                item['creditScore'] = parseFloat(item['creditScore'].toFixed(1));
+                item[key] = newValue;
+              }
+            }
+          ]
+        });
+        alert.present();
+      }else{//确认
+        //从0到1
+        if(item[key] == '0'){
+          item['creditScoreByThis'] +=  + 2.1
+          item['creditScore'] += 2.1
+        }else{//从无到1
+          item['creditScoreByThis'] += 0.1
+          item['creditScore'] += 0.1
+        }
+        item['creditScoreByThis'] = parseFloat(item['creditScoreByThis'].toFixed(1));
+        item['creditScore'] = parseFloat(item['creditScore'].toFixed(1));
+        item[key] = newValue;
+      }
+      item['creditStatus'] = item['creditScore'] >= 70 ? '合格' : item['creditScore'] >= 60 ? '警示': '黑名单';
+    }
+  }
+
+  addBaseInfo() {
+    this.appService.alert(this.appGlobal.permissionMap['EquipmentNormal-name'])
+    if(!this.canAdd){
+      this.appService.alert('您没有该操作权限<br/>请联系执行经理 或 安全负责、机管员!')
+      return;
+    }
+    if(this.state){
+      return;
+    }
+    this.state = true;
+    this.navCtrl.push('UnitAddPage',{
+      callback:()=>{
+        this.initUnitsInfo();
+      }
+    }).then(()=>{
+      this.state = false;
+    });
+  }
+
+  onPoints() {
+    if(!this.canPoint){
+      this.appService.alert('您没有该操作权限<br/>请联系执行经理 或 安全负责!')
+      return;
+    }
+    if(this.state){
+      return;
+    }
+    this.state = true;
+    this.navCtrl.push('CreditDeductionPage',{
+      callback:()=>{
+        this.initUnitsInfo();
+      }
+    }).then(()=>{
+      this.state = false;
+    })
+  }
+
+  delRecord(slidingItem: ItemSliding,arrIndex:number,formId: any,index:number) {
+    slidingItem.close();
+    if(!this.canAdd){
+      this.appService.alert('没有权限，请联系执行经理、安全负责或机管员！');
+      return;
+    }
+
+    this.appService.confirm('请确认是否删除该单位信息，删除后该模块关联的分包单位信用分将同步删除',()=>{
+      let params = new HttpParams()
+        .set('formId',formId);
+      let loader = this.loadingCtrl.create({
+        content: "正在删除……"
+      });
+      loader.present();
+
+      let url = GlobalVariable.BASE_URL + this.delRecordUrls[index];
+      this.appService.POST(url, params, (res, err) => {
+        loader.dismiss();
+        if (res) {
+          if(res.msg == 'Y'){
+            // this.initUnitsInfo();
+            if(index == 0){
+              this.rentalUnits.splice(arrIndex,1);
+            }else{
+              this.installUnits.splice(arrIndex,1);
+            }
+            this.appService.alert('删除成功')
+          }
+          if(res.msg == 'N'){
+            this.appService.alert('该单位信息已被其他模块引用，无法删除；如需删除，请删除引用模块后，方可删除该单位信息!')
+          }
+        }
+        if (err) {
+          this.appService.alert('网络错误，请重试！')
+          console.log(err)
+        }
+      });
+    })
+  }
+
+  //修改单位名称
+  updateUnit(slidingItem: ItemSliding, item, index: number) {
+    slidingItem.close();
+    if(!this.canUpdate){
+      this.appService.alert('您没有该操作权限<br/>请联系管理员！');
+      return;
+    }
+    this.navCtrl.push('UnitUpdatePage',{
+      unitInfo: item,
+      index: index,
+      callback:()=>{
+        this.initUnitsInfo();
+      }
+    });
+  }
+
+  //查看详细
+  onShowDetail() {
+    if(this.state){
+      return;
+    }
+    this.state = true;
+    this.navCtrl.push('CreditDeductionDetailPage',{
+    }).then(()=>{
+      this.state = false;
+    })
+  }
+
+  toggleChange(item) {
+    if(!item.isCache){
+      item.isCache = true;
+    }
+  }
+
+  //添加告知单
+  addInform() {
+    if(this.state){
+      return;
+    }
+    this.state = true;
+    this.navCtrl.push('InformListPage',{
+      eqType: this.equipmentType
+    }).then(()=>{
+      this.state = false;
+    });
+  }
+}
