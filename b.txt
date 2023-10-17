@@ -1,1 +1,52 @@
+
 dd
+
+server:
+  port: 9090
+  session:
+    timeout: 60 #300�?  #tomcat:
+    #basedir: D://work
+    #max-connections: #最大连接数 NIO
+    #max-threads: #最大线程数 BIO
+    #accept-count: #等待请求的队列长�?    #protocol-header: 
+      
+spring:
+  rabbitmq:
+    host: 172.18.15.91
+    port: 5672
+    username: ztadmin
+    password: ztadmin
+#    host: localhost
+#    port: 5672
+#    username: root
+#    password: 123456
+    connection-timeout: 15000
+    requested-heartbeat: 60
+    listener:
+      simple:
+        acknowledge-mode: manual #手动ack
+        concurrency: 5 #并发�?        max-concurrency: 5
+        prefetch: 1
+        
+logging:
+  #config: 
+  #path: #日志输出路径
+  file: my.log #日志文件名称  二者不能同时使用，如若同时使用，则只有logging.file生效
+  level:
+    root: info
+  #pattern:
+    #file: "%d{yyyy/MM/dd-HH:mm} [%thread] %-5level %logger- %msg%n"
+
+#seal:
+#  username: jtjs
+#  password: 7788919a
+#  code-url: http://60.190.233.114:11002/api/item/sealAuthorize
+#  token-url: http://60.190.233.114:11002/api/token/getToken
+
+seal:
+  username: ztjsjt
+  password: 7788919a
+  code-url: http://172.16.72.45:11002/api/item/sealAuthorize
+  token-url: http://172.16.72.45:11002/api/token/getToken
+  
+
