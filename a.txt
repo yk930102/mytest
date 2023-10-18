@@ -1,4 +1,5 @@
 import {ChangeDetectorRef, Component} from '@angular/core';
+我加了一段内容在这里
 import {
   AlertController,
   Events,
