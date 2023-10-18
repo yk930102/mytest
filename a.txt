@@ -1,8 +1,5 @@
 import {ChangeDetectorRef, Component} from '@angular/core';
-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
 我加了一段内容在这里
-zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz
-yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy
 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 import {
   AlertController,
