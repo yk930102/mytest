@@ -1,6 +1,4 @@
 import {ChangeDetectorRef, Component} from '@angular/core';
-我加了一段内容在这里
-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 import {
   AlertController,
   Events,
@@ -11,7 +9,6 @@ import {
   NavController,
   NavParams
 } from 'ionic-angular';
-这里也有一段内容
 import {GlobalVariable} from "../../global";
 import {HttpParams} from "@angular/common/http";
 import {ImageViewerController} from "ionic-img-viewer";
@@ -587,4 +584,3 @@ export class EquipmentPage {
     });
   }
 }
-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaabbbbbbbbbbbbbbbbbbb
