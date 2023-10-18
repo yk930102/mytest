@@ -1,14 +1,14 @@
-
+ccdd
 dd
 
 server:
   port: 9090
   session:
-    timeout: 60 #300�?  #tomcat:
+    timeout: 60 #300�?  #tomcat:
     #basedir: D://work
     #max-connections: #最大连接数 NIO
     #max-threads: #最大线程数 BIO
-    #accept-count: #等待请求的队列长�?    #protocol-header: 
+    #accept-count: #等待请求的队列长�?    #protocol-header: 
       
 spring:
   rabbitmq:
@@ -25,7 +25,7 @@ spring:
     listener:
       simple:
         acknowledge-mode: manual #手动ack
-        concurrency: 5 #并发�?        max-concurrency: 5
+        concurrency: 5 #并发�?        max-concurrency: 5
         prefetch: 1
         
 logging:
